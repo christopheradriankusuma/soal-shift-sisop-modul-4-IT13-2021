@@ -19,23 +19,20 @@
 static const char *dirpath = "/home/ifachn/Downloads";
 
 // Fungsi untuk membuat log
-void createlog(char process[100],char fpath[100])
-{
-    char text[200];
+void createlog(const char process[100], const char fpath[1000]) {
+    char text[2000];
     FILE *fp = fopen("/home/ifachn/SinSeiFS.log","a");
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
-    if (strcmp(process,"unlink")==0)
-    {
-        sprintf(text, "WARNING::%02d%02d%04d-%02d:%02d:%02d::UNLINK::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec,fpath);
+    
+    if (strcmp(process, "unlink") == 0) {
+        sprintf(text, "WARNING::%02d%02d%04d-%02d:%02d:%02d::UNLINK::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, fpath);
     }
-    else if (strcmp(process,"mkdir")==0)
-    {
-        sprintf(text, "INFO::%02d%02d%04d-%02d:%02d:%02d::MKDIR::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec,fpath);
+    else if (strcmp(process, "mkdir") == 0) {
+        sprintf(text, "INFO::%02d%02d%04d-%02d:%02d:%02d::MKDIR::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, fpath);
     }
-    else if (strcmp(process,"rmdir")==0)
-    {
-        sprintf(text, "WARNING::%02d%02d%04d-%02d:%02d:%02d::RMDIR::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec,fpath);
+    else if (strcmp(process, "rmdir") == 0) {
+        sprintf(text, "WARNING::%02d%02d%04d-%02d:%02d:%02d::RMDIR::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, fpath);
     }
     for (int i = 0; text[i] != '\0'; i++) {
             fputc(text[i], fp);
@@ -44,13 +41,13 @@ void createlog(char process[100],char fpath[100])
 }
 
 // Fungsi untuk membuat log khusus proses rename
-void createlogrename(char from[100], char to[100])
-{
-    FILE *fp = fopen("/home/ifachn/SinSeiFS.log","a");
+void createlogrename(char from[1000], char to[1000]) {
+    FILE *fp = fopen("/home/ifachn/SinSeiFS.log", "a");
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
-    char text[200];
-    sprintf(text, "INFO::%02d%02d%04d-%02d:%02d:%02d::RENAME::%s::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec,from,to);
+    char text[2000];
+
+    sprintf(text, "INFO::%02d%02d%04d-%02d:%02d:%02d::RENAME::%s::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, from, to);
     for (int i = 0; text[i] != '\0'; i++) {
             fputc(text[i], fp);
     }
