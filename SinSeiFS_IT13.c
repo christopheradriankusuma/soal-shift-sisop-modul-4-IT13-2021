@@ -16,8 +16,46 @@
 #include <sys/wait.h>
 #include <pthread.h>
 
-static const char *dirpath = "/home/kali/Downloads";
+static const char *dirpath = "/home/ifachn/Downloads";
 
+// Fungsi untuk membuat log
+void createlog(char process[100],char fpath[100])
+{
+    char text[200];
+    FILE *fp = fopen("/home/ifachn/SinSeiFS.log","a");
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    if (strcmp(process,"unlink")==0)
+    {
+        sprintf(text, "WARNING::%02d%02d%04d-%02d:%02d:%02d::UNLINK::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec,fpath);
+    }
+    else if (strcmp(process,"mkdir")==0)
+    {
+        sprintf(text, "INFO::%02d%02d%04d-%02d:%02d:%02d::MKDIR::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec,fpath);
+    }
+    else if (strcmp(process,"rmdir")==0)
+    {
+        sprintf(text, "WARNING::%02d%02d%04d-%02d:%02d:%02d::RMDIR::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec,fpath);
+    }
+    for (int i = 0; text[i] != '\0'; i++) {
+            fputc(text[i], fp);
+    }
+    fclose (fp);
+}
+
+// Fungsi untuk membuat log khusus proses rename
+void createlogrename(char from[100], char to[100])
+{
+    FILE *fp = fopen("/home/ifachn/SinSeiFS.log","a");
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    char text[200];
+    sprintf(text, "INFO::%02d%02d%04d-%02d:%02d:%02d::RENAME::%s::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec,from,to);
+    for (int i = 0; text[i] != '\0'; i++) {
+            fputc(text[i], fp);
+    }
+    fclose(fp);
+}
 
 void atbash(char *name) {
     if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0) return;
@@ -241,7 +279,7 @@ static int xmp_rename(const char *old, const char *new) {
     char fpath[2000];
     char name[1000];
     char new_name[1000];
-
+    createlogrename(old, new);
     if (strcmp(old, "/") == 0) {
         sprintf(fpath, "%s", dirpath);
     } else {
@@ -259,6 +297,7 @@ static int xmp_rename(const char *old, const char *new) {
     }
 
     printf("rename %s %s\n", fpath, new_name);
+
     int res = rename(fpath, new_name);
     if (res == -1) 
         return -errno;
@@ -268,7 +307,7 @@ static int xmp_rename(const char *old, const char *new) {
 
 static int xmp_mkdir(const char *path, mode_t mode) {
     printf("mkdir %s\n", path);
-
+    createlog("mkdir", path);
     char fpath[2000];
     
     sprintf(fpath, "%s/%s", dirpath, path);
