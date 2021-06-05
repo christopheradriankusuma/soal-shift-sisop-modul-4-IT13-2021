@@ -16,12 +16,12 @@
 #include <sys/wait.h>
 #include <pthread.h>
 
-static const char *dirpath = "/home/ifachn/Downloads";
+static const char *dirpath = "/home/kali/Downloads";
 
 // Fungsi untuk membuat log
 void createlog(const char process[100], const char fpath[1000]) {
     char text[2000];
-    FILE *fp = fopen("/home/ifachn/SinSeiFS.log","a");
+    FILE *fp = fopen("/home/kali/SinSeiFS.log","a");
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
     
@@ -41,8 +41,8 @@ void createlog(const char process[100], const char fpath[1000]) {
 }
 
 // Fungsi untuk membuat log khusus proses rename
-void createlogrename(char from[1000], char to[1000]) {
-    FILE *fp = fopen("/home/ifachn/SinSeiFS.log", "a");
+void createlogrename(const char from[1000], const char to[1000]) {
+    FILE *fp = fopen("/home/kali/SinSeiFS.log", "a");
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
     char text[2000];
@@ -313,12 +313,25 @@ static int xmp_mkdir(const char *path, mode_t mode) {
     return 0;
 }
 
+static int xmp_rmdir(const char *path) {
+    printf("rmdir %s\n", path);
+    createlog("rmdir", path);
+    char fpath[2000];
+
+    sprintf(fpath, "%s/%s", dirpath, path);
+    int res = rmdir(fpath);
+    if (res != 0) return -errno;
+
+    return 0;
+}
+
 static struct fuse_operations xmp_oper = {
     .getattr    = xmp_getattr,
     .readdir    = xmp_readdir,
     .read       = xmp_read,
     .rename     = xmp_rename,
     .mkdir      = xmp_mkdir,
+    .rmdir      = xmp_rmdir,
 };
 
 int main(int argc, char *argv[]) {
