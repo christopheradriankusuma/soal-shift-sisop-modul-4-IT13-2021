@@ -16,12 +16,12 @@
 #include <sys/wait.h>
 #include <pthread.h>
 
-static const char *dirpath = "/home/kali/Downloads";
+static const char *dirpath = "/home/ifachn/Downloads";
 
 // Fungsi untuk membuat log
 void createlog(const char process[100], const char fpath[1000]) {
     char text[2000];
-    FILE *fp = fopen("/home/kali/SinSeiFS.log","a");
+    FILE *fp = fopen("/home/ifachn/SinSeiFS.log","a");
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
     
@@ -42,7 +42,7 @@ void createlog(const char process[100], const char fpath[1000]) {
 
 // Fungsi untuk membuat log khusus proses rename
 void createlogrename(const char from[1000], const char to[1000]) {
-    FILE *fp = fopen("/home/kali/SinSeiFS.log", "a");
+    FILE *fp = fopen("/home/ifachn/SinSeiFS.log", "a");
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
     char text[2000];
