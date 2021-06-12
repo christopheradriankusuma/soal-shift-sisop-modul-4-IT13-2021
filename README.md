@@ -749,7 +749,7 @@ void vigenere_dec(char *name) {
 }
 ```
 ## Kendala yang Dihadapi:
-Belum dapat mengerjakan soal nomer 2 d dan e karena anggota kelompok kami belum dapat memahami cara untuk menyelesaikan soal tersebut. Sehingga kami memutuskan untuk mengerjakan fungsi 2 a, b, dan c saja. Namun fungsi ini belum ditambahkan ke setiap syscallnya. Sehingga program belum dapat menjalankan fungsi ini.
+>Belum dapat mengerjakan soal nomer 2 d dan e karena anggota kelompok kami belum dapat memahami cara untuk menyelesaikan soal tersebut. Sehingga kami memutuskan untuk mengerjakan fungsi 2 a, b, dan c saja. Namun fungsi ini belum ditambahkan ke setiap syscallnya. Sehingga program belum dapat menjalankan fungsi ini.
 ---
 
 ## Soal 3
