@@ -541,7 +541,28 @@ static int xmp_rmdir(const char *path) {
 ## Kendala yang Dihadapi: 
 Program ini berjalan dengan baik untuk semua folder yang terdapat nama AtoZ_ namun jika dalam folder AtoZ_ terdapat folder AtoZ_ juga program ini belum bisa berjalan.
 ## Screeshoot Hasil:
-1. 
+1. Menjalankan program. Garis besarnya nantinya terdapat folder bernama halo yang belum diisi apapun, kemudian ketika program mulai dijalankan, Mount source (root) filesystem dari folder halo ini adalah directory /home/[USER]/Downloads.
+![gambar](./screenshoot/1a.png)
+
+2. Kemudian membuat folder AtoZ_hore yang didalamnya dibuat folder lagi yang bernama halo dan gais.
+![gambar](./screenshoot/1b.png)
+![gambar](./screenshoot/1c.png)
+
+3. Setelah itu dicek kembali apakah folder AtoZ_hore ini dalamnya terenkripsi. Dan dapat dilihat dari folder yang bernama halo dan gais menjadi folder yang namanya terenkripsi seperti yang ada di bawah ini.
+![gambar](./screenshoot/1d.png)
+
+4. Kemudian merename folder yang bernama yogurt menjadi Atoz_yogurt untuk menyelesaikan soal 1 b. kemudian dicek apakah isi dari direktori yang sebelumnya normal(belum dienkripsi) menjadi terenkripsi
+![gambar](./screenshoot/1f.png)
+![gambar](./screenshoot/1g.png)
+![gambar](./screenshoot/1h.png)
+
+5. Setelah itu, kami mencoba untuk merename kembali folder Atoz_yogurt menjadi yogurt. Kemudian isi dari folder Atoz_yogurt yang sebelumnya dienkripsi ini menjadi dekripsi setelah namanya kembali seperti semula.
+![gambar](./screenshoot/1i.png)
+![gambar](./screenshoot/1j.png)
+![gambar](./screenshoot/1k.png)
+
+6. Setelah itu program diumount kembali.
+![gambar](./screenshoot/1l.png)
 ---
 ## Soal 2
 
@@ -570,8 +591,165 @@ Ketika diakses melalui filesystem hanya akan muncul Suatu_File.txt
 
 ## Penyelesaian:
 ### Code:
+```c
+void rot13(char *name) {
+    if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0) return;
+
+    int name_len = strlen(name);
+    for (int i = 0; i < name_len; ++i) {
+        if ('A' <= name[i] && name[i] <= 'M') {
+            name[i] = 13 + name[i];
+        } else if ('N' <= name[i] && name[i] <= 'Z') {
+            name[i] = -13 + name[i];
+        } else if ('a' <= name[i] && name[i] <= 'm') {
+            name[i] = 13 + name[i];
+        } else if ('n' <= name[i] && name[i] <= 'z') {
+            name[i] = -13 + name[i];
+        }
+    }
+
+    char *dot = strrchr(name, '.');
+    for (int i = (int)(dot - name); i < name_len; ++i) {
+        if ('A' <= name[i] && name[i] <= 'M') {
+            name[i] = 13 + name[i];
+        } else if ('N' <= name[i] && name[i] <= 'Z') {
+            name[i] = -13 + name[i];
+        } else if ('a' <= name[i] && name[i] <= 'm') {
+            name[i] = 13 + name[i];
+        } else if ('n' <= name[i] && name[i] <= 'z') {
+            name[i] = -13 + name[i];
+        }
+    }
+}
+
+void vigenere_enc(char *name) {
+    char *key = "SISOP";
+
+    if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0) return;
+
+    int n = 0;
+
+    char *dot = strrchr(name, '.');
+    for (int i = 0; i < (int)(dot - name); ++i) {
+        if ('A' <= name[i] && name[i] <= 'Z') {
+            name[i] = 65 + (name[i] + key[n] - 130) % 26;
+            n = (n + 1) % 5;
+        } else if ('a' <= name[i] && name[i] <= 'z') {
+            name[i] = 97 + (name[i] + key[n] - 162) % 26;
+            n = (n + 1) % 5;
+        }
+    }
+}
+
+void vigenere_dec(char *name) {
+    char *key = "SISOP";
+
+    if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0) return;
+
+    int n = 0;
+
+    char *dot = strrchr(name, '.');
+    for (int i = 0; i < (int)(dot - name); ++i) {
+        if ('A' <= name[i] && name[i] <= 'Z') {
+            name[i] = 65 + (name[i] - key[n] + 26) % 26;
+            n = (n + 1) % 5;
+        } else if ('a' <= name[i] && name[i] <= 'z') {
+            name[i] = 97 + (name[i] - key[n] - 6) % 26;
+            n = (n + 1) % 5;
+        }
+    }
+
+}
+
+void check_encryption(char *path, const char *fpath) {
+    printf("check %s %s\n", path, fpath);
+    if (strstr(fpath, "/AtoZ_") != NULL) {
+        atbash(path);
+    } else if (strstr(fpath, "/RX_") != NULL) {
+        atbash(path);
+        rot13(path);
+    }
+    printf("enc %s\n", path);
+}
+```
 ### Penjelasan Code:
-## Kendala yang Dihadapi: 
+1. Kami membuat fungsi rot13 agar setiap direktori yang diwali “RX_[Nama]”, maka isi dari direktori akan terencode dengan algoritma tambahan ROT13 (Atbash + ROT13).
+```c
+void rot13(char *name) {
+    if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0) return;
+
+    int name_len = strlen(name);
+    for (int i = 0; i < name_len; ++i) {
+        if ('A' <= name[i] && name[i] <= 'M') {
+            name[i] = 13 + name[i];
+        } else if ('N' <= name[i] && name[i] <= 'Z') {
+            name[i] = -13 + name[i];
+        } else if ('a' <= name[i] && name[i] <= 'm') {
+            name[i] = 13 + name[i];
+        } else if ('n' <= name[i] && name[i] <= 'z') {
+            name[i] = -13 + name[i];
+        }
+    }
+
+    char *dot = strrchr(name, '.');
+    for (int i = (int)(dot - name); i < name_len; ++i) {
+        if ('A' <= name[i] && name[i] <= 'M') {
+            name[i] = 13 + name[i];
+        } else if ('N' <= name[i] && name[i] <= 'Z') {
+            name[i] = -13 + name[i];
+        } else if ('a' <= name[i] && name[i] <= 'm') {
+            name[i] = 13 + name[i];
+        } else if ('n' <= name[i] && name[i] <= 'z') {
+            name[i] = -13 + name[i];
+        }
+    }
+}
+```
+2. kemudian kami buat fungsi vigenere_enc untuk mengenkripsi isi dari direktori yang direname dengan awalan “RX_[Nama]” menggunakan algoritma ambahan Vigenere Cipher dengan key “SISOP” (Case-sensitive, Atbash + Vigenere).
+```c
+void vigenere_enc(char *name) {
+    char *key = "SISOP";
+
+    if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0) return;
+
+    int n = 0;
+
+    char *dot = strrchr(name, '.');
+    for (int i = 0; i < (int)(dot - name); ++i) {
+        if ('A' <= name[i] && name[i] <= 'Z') {
+            name[i] = 65 + (name[i] + key[n] - 130) % 26;
+            n = (n + 1) % 5;
+        } else if ('a' <= name[i] && name[i] <= 'z') {
+            name[i] = 97 + (name[i] + key[n] - 162) % 26;
+            n = (n + 1) % 5;
+        }
+    }
+}
+```
+3. Kemudian kami buat fungsi vignere_dec untuk mendekripsi direktori yang direname menjadi tanpa “RX_”. Maka isi direktori akan terdecode
+```c
+void vigenere_dec(char *name) {
+    char *key = "SISOP";
+
+    if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0) return;
+
+    int n = 0;
+
+    char *dot = strrchr(name, '.');
+    for (int i = 0; i < (int)(dot - name); ++i) {
+        if ('A' <= name[i] && name[i] <= 'Z') {
+            name[i] = 65 + (name[i] - key[n] + 26) % 26;
+            n = (n + 1) % 5;
+        } else if ('a' <= name[i] && name[i] <= 'z') {
+            name[i] = 97 + (name[i] - key[n] - 6) % 26;
+            n = (n + 1) % 5;
+        }
+    }
+
+}
+```
+## Kendala yang Dihadapi:
+Belum dapat mengerjakan soal nomer 2 d dan e karena anggota kelompok kami belum dapat memahami cara untuk menyelesaikan soal tersebut. Sehingga kami memutuskan untuk mengerjakan fungsi 2 a, b, dan c saja. Namun fungsi ini belum ditambahkan ke setiap syscallnya. Sehingga program belum dapat menjalankan fungsi ini.
 ---
 
 ## Soal 3
@@ -592,9 +770,8 @@ Karena Sin masih super duper gabut akhirnya dia menambahkan sebuah fitur lagi pa
 Contohnya jika pada direktori asli nama filenya adalah “FiLe_CoNtoH.txt” maka pada fuse akan menjadi “file_contoh.txt.1321”. 1321 berasal dari biner 10100101001.
 
 ## Penyelesaian:
-### Code:
-### Penjelasan Code: 
-## Kendala yang Dihadapi: 
+![gambar](./screenshoot/memesisop2.jpg)
+![gambar](./screenshoot/memesisop.jpg)
 
 ---
 ## Soal 4
@@ -632,6 +809,88 @@ Untuk memudahkan dalam memonitor kegiatan pada filesystem mereka Sin dan Sei mem
 
 ## Penyelesaian:
 ### Code:
-### Penjelasan Code: 
+```c
+// Fungsi untuk membuat log
+void createlog(const char process[100], const char fpath[1000]) {
+    char text[2000];
+    FILE *fp = fopen("/home/ifachn/SinSeiFS.log","a");
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    
+    if (strcmp(process, "unlink") == 0) {
+        sprintf(text, "WARNING::%02d%02d%04d-%02d:%02d:%02d::UNLINK::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, fpath);
+    }
+    else if (strcmp(process, "mkdir") == 0) {
+        sprintf(text, "INFO::%02d%02d%04d-%02d:%02d:%02d::MKDIR::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, fpath);
+    }
+    else if (strcmp(process, "rmdir") == 0) {
+        sprintf(text, "WARNING::%02d%02d%04d-%02d:%02d:%02d::RMDIR::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, fpath);
+    }
+    for (int i = 0; text[i] != '\0'; i++) {
+            fputc(text[i], fp);
+    }
+    fclose (fp);
+}
+
+// Fungsi untuk membuat log khusus proses rename
+void createlogrename(const char from[1000], const char to[1000]) {
+    FILE *fp = fopen("/home/ifachn/SinSeiFS.log", "a");
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    char text[2000];
+
+    sprintf(text, "INFO::%02d%02d%04d-%02d:%02d:%02d::RENAME::%s::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, from, to);
+    for (int i = 0; text[i] != '\0'; i++) {
+            fputc(text[i], fp);
+    }
+    fclose(fp);
+}
+```
+### Penjelasan Code:
+1. Kami membuat fungsi createlog untuk mencatat proses yang telah dilakukan user sebelumnya seperti membuat atau menghapus direktori. Di sini kami membedakan levelnya. Terdapat level info dan warning. Level info dipakai untuk mencatat syscall rmdir dan unlink. Sedangkan level info untuk syscall yang lainnya.
+```c
+// Fungsi untuk membuat log
+void createlog(const char process[100], const char fpath[1000]) {
+    char text[2000];
+    FILE *fp = fopen("/home/ifachn/SinSeiFS.log","a");
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    
+    if (strcmp(process, "unlink") == 0) {
+        sprintf(text, "WARNING::%02d%02d%04d-%02d:%02d:%02d::UNLINK::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, fpath);
+    }
+    else if (strcmp(process, "mkdir") == 0) {
+        sprintf(text, "INFO::%02d%02d%04d-%02d:%02d:%02d::MKDIR::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, fpath);
+    }
+    else if (strcmp(process, "rmdir") == 0) {
+        sprintf(text, "WARNING::%02d%02d%04d-%02d:%02d:%02d::RMDIR::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, fpath);
+    }
+    for (int i = 0; text[i] != '\0'; i++) {
+            fputc(text[i], fp);
+    }
+    fclose (fp);
+}
+```
+2. Setelah itu kami buat fungsi createlogrename untuk proses rename
+```c
+// Fungsi untuk membuat log khusus proses rename
+void createlogrename(const char from[1000], const char to[1000]) {
+    FILE *fp = fopen("/home/ifachn/SinSeiFS.log", "a");
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    char text[2000];
+
+    sprintf(text, "INFO::%02d%02d%04d-%02d:%02d:%02d::RENAME::%s::%s\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, from, to);
+    for (int i = 0; text[i] != '\0'; i++) {
+            fputc(text[i], fp);
+    }
+    fclose(fp);
+}
+```
+3. fungsi createlog dan createlogrename ini ditambahkan ke setiap fungsi syscall yang dibuat. Agar semua syscall yang dilakukan oleh user dicatat dalam log yang sudah ditentukan sebelumnya.
+
 ## Screenshoot Hasil: 
+1. hasil log yang tercatat setelah menjalankan fungsi syscall sebelumnya.
+![gambar](./screenshoot/4a.png)
 ## Kendala yang Dihadapi:
+tidak ada.
