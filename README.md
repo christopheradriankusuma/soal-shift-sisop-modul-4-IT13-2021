@@ -556,7 +556,7 @@ Program ini berjalan dengan baik untuk semua folder yang terdapat nama AtoZ_ nam
 ![gambar](./screenshoot/1g.png)
 ![gambar](./screenshoot/1h.png)
 
-5. Setelah itu, kami mencoba untuk merename kembali folder Atoz_yogurt menjadi yogurt. Kemudian isi dari folder Atoz_yogurt yang sebelumnya dienkripsi ini menjadi dekripsi setelah namanya kembali seperti semula.
+5. Setelah itu, kami mencoba untuk merename kembali folder Atoz_yogurt menjadi yogurt. Kemudian isi dari folder Atoz_yogurt yang sebelumnya dienkripsi ini menjadi dekripsi setelah namanya kembali seperti semula.</br>
 ![gambar](./screenshoot/1i.png)
 ![gambar](./screenshoot/1j.png)
 ![gambar](./screenshoot/1k.png)
