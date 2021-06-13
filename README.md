@@ -892,5 +892,8 @@ void createlogrename(const char from[1000], const char to[1000]) {
 ## Screenshoot Hasil: 
 1. hasil log yang tercatat setelah menjalankan fungsi syscall sebelumnya.
 ![gambar](./screenshoot/4a.png)
+![gambar](./screenshoot/4b.png)
+![gambar](./screenshoot/4c.png)
+![gambar](./screenshoot/4d.png)
 ## Kendala yang Dihadapi:
 tidak ada.
